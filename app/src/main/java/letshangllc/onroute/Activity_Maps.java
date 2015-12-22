@@ -8,7 +8,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -37,7 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener{ //, GoogleApiClient.OnConnectionFailedListener
+public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallback, RoutingListener{ //, GoogleApiClient.OnConnectionFailedListener
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -46,18 +49,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private UserLocation userLocation;
 
     private ArrayList<Polyline> polylines;
+    private ArrayList<Direction> directions;
 
     protected LatLng start;
     protected LatLng end;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        this.setUpToolbar();
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used via callback.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
         polylines = new ArrayList<>();
         places = new ArrayList<>();
         /* todo Add connection callbacks later */
@@ -67,13 +78,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
 
-
-
-
-
-
-
     }
+
+    private void setUpToolbar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        setSupportActionBar(toolbar);
+        this.setTitle("On Route"); /* Set the title for toolbar */
+    }
+
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
@@ -100,6 +113,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_directions:
+                Intent intent = new Intent(Activity_Maps.this, Activity_DirectionsList.class);
+                intent.putParcelableArrayListExtra(getResources().getString(R.string.DirectionsIntent), directions);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     @Override
@@ -144,19 +181,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(center);
         mMap.moveCamera(zoom);
 
-
-//        if(polylines.size()>0) {
-//            for (Polyline poly : polylines) {
-//                poly.remove();
-//            }
-//        }
-
         polylines = new ArrayList<>();
         for (int i = 0; i <route.get(0).getSegments().size(); i++) {
 
             Log.i("DIRECTION: ", route.get(0).getSegments().get(i).getInstruction());
         }
-        Toast.makeText(this, "ROutes: " + route.get(0).getSegments().size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "ROutes: " + route.size(), Toast.LENGTH_SHORT).show();
         //add route(s) to the map.
         for (int i = 0; i <route.size(); i++) {
 
