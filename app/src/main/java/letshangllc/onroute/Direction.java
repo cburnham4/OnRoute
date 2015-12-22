@@ -13,6 +13,24 @@ public class Direction implements Parcelable{
     private String direction;
     private double length;
 
+    protected Direction(Parcel in) {
+        routeNum = in.readInt();
+        direction = in.readString();
+        length = in.readDouble();
+    }
+
+    public static final Creator<Direction> CREATOR = new Creator<Direction>() {
+        @Override
+        public Direction createFromParcel(Parcel in) {
+            return new Direction(in);
+        }
+
+        @Override
+        public Direction[] newArray(int size) {
+            return new Direction[size];
+        }
+    };
+
     public int getRouteNum() {
         return routeNum;
     }
