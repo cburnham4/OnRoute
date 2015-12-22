@@ -20,6 +20,7 @@ import com.directions.route.AbstractRouting;
 import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.directions.route.Segment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
@@ -71,6 +72,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
         polylines = new ArrayList<>();
         places = new ArrayList<>();
+        directions = new ArrayList<>();
         /* todo Add connection callbacks later */
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
@@ -131,6 +133,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
             case R.id.action_directions:
                 Intent intent = new Intent(Activity_Maps.this, Activity_DirectionsList.class);
                 intent.putParcelableArrayListExtra(getResources().getString(R.string.DirectionsIntent), directions);
+                startActivity(intent);
                 break;
         }
 
@@ -173,7 +176,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     }
 
     @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+    public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
         //progressDialog.dismiss();
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
@@ -182,16 +185,18 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
         mMap.moveCamera(zoom);
 
         polylines = new ArrayList<>();
-        for (int i = 0; i <route.get(0).getSegments().size(); i++) {
+        for (int i = 0; i <routes.get(0).getSegments().size(); i++) {
 
-            Log.i("DIRECTION: ", route.get(0).getSegments().get(i).getInstruction());
+            Log.i("DIRECTION: ", routes.get(0).getSegments().get(i).getInstruction());
         }
-        Toast.makeText(this, "ROutes: " + route.size(), Toast.LENGTH_SHORT).show();
+        Log.e("routes: ", "ROutes: " + routes.size());
         //add route(s) to the map.
-        for (int i = 0; i <route.size(); i++) {
+        for (int i = 0; i <routes.size(); i++) {
 
-            //In case of more than 5 alternative routes
+            //todo In case of more than 5 alternative routes
             //int colorIndex = i % colors.length;
+
+            Route route = routes.get(i);
 
             PolylineOptions polyOptions = new PolylineOptions();
             //polyOptions.color(getResources().getColor(colors[colorIndex]));
@@ -200,9 +205,17 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
 
 
-                    polyOptions.addAll(route.get(i).getPoints());
+            polyOptions.addAll(route.getPoints());
             Polyline polyline = mMap.addPolyline(polyOptions);
             polylines.add(polyline);
+
+            /* loop throught all the segments in the route to get the directions */
+            List<Segment> segments = route.getSegments();
+            Segment segment;
+            for (int r = 0; r < segments.size(); r++){
+                segment = segments.get(r);
+                directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()));
+            }
 
             //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
         }
