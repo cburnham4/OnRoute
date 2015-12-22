@@ -212,6 +212,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
             /* loop throught all the segments in the route to get the directions */
             List<Segment> segments = route.getSegments();
             Segment segment;
+            
             for (int r = 0; r < segments.size(); r++){
                 segment = segments.get(r);
                 directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()));

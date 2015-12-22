@@ -21,6 +21,7 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
 
     private static class ViewHolder {
         TextView tv_direction;
+        TextView tv_length;
     }
 
     /*todo Set the direction of top position to bigger txt Size */
@@ -36,12 +37,14 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.item_direction, parent, false);
             viewHolder.tv_direction = (TextView) convertView.findViewById(R.id.tv_direction);
+            viewHolder.tv_length = (TextView) convertView.findViewById(R.id.tv_distance);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         // Populate the data into the template view using the data object
         viewHolder.tv_direction.setText(direction.getDirection());
+        viewHolder.tv_length.setText("" +direction.getLength());
         // Return the completed view to render on screen
         return convertView;
     }
