@@ -54,7 +54,17 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             viewHolder.tv_direction.setTextSize(24);
 
         }
-        viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_left));
+        String directionString = direction.getDirection();
+
+        /* todo move to string folder */
+        if(directionString.contains("Turn left")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_left));
+        }else if(directionString.contains("Turn right")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_right));
+        }else{
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_go_straight));
+        }
+
         // Return the completed view to render on screen
         return convertView;
     }
