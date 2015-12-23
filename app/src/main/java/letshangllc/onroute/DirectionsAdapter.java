@@ -24,7 +24,7 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
         TextView tv_length;
     }
 
-    /*todo Set the direction of top position to bigger txt Size */
+    /* todo set small miles to ft */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -46,6 +46,10 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
         viewHolder.tv_direction.setText(direction.getDirection());
 
         viewHolder.tv_length.setText(String.format("%.2f",direction.getLength()) + " mi  ");
+        if(position==0){
+            viewHolder.tv_direction.setTextSize(24);
+
+        }
         // Return the completed view to render on screen
         return convertView;
     }
