@@ -135,6 +135,17 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                 intent.putParcelableArrayListExtra(getResources().getString(R.string.DirectionsIntent), directions);
                 startActivity(intent);
                 break;
+
+            case R.id.action_route:
+                /* Start the place picker */
+                /* Todo make a place picker dropdown activity */
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try{
+                    startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+                }catch (Exception e){
+
+                }
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -154,14 +165,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
         mMap.setMyLocationEnabled(true);
     }
-    public void onSearch(View view){
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try{
-            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-        }catch (Exception e){
 
-        }
-    }
 
 
     @Override
@@ -212,10 +216,12 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
             /* loop throught all the segments in the route to get the directions */
             List<Segment> segments = route.getSegments();
             Segment segment;
-            
-            for (int r = 0; r < segments.size(); r++){
+            Segment previousSegment = segments.get(0);
+            directions.add(new Direction(i, previousSegment.getInstruction(), previousSegment.getDistance()));
+            for (int r = 1; r < segments.size(); r++){
                 segment = segments.get(r);
-                directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()));
+                directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()-previousSegment.getDistance()));
+                previousSegment = segment;
             }
 
             //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();

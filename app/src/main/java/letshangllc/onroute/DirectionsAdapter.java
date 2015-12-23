@@ -44,7 +44,8 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
         }
         // Populate the data into the template view using the data object
         viewHolder.tv_direction.setText(direction.getDirection());
-        viewHolder.tv_length.setText("" +direction.getLength());
+
+        viewHolder.tv_length.setText(String.format("%.2f",direction.getLength()) + " mi  ");
         // Return the completed view to render on screen
         return convertView;
     }

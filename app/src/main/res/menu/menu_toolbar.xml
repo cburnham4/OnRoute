@@ -4,7 +4,14 @@
     <item
         android:id="@+id/action_directions"
         android:orderInCategory="150"
-        android:title="Maps"
-        android:icon="@drawable/ic_action_map"
+        android:title="Directions"
+        android:icon="@drawable/ic_action_directions"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/action_route"
+        android:orderInCategory="250"
+        android:title="Make Route"
+        android:icon="@drawable/ic_action_write"
         app:showAsAction="ifRoom"></item>
 </menu>
