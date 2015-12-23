@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,9 +23,11 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
     private static class ViewHolder {
         TextView tv_direction;
         TextView tv_length;
+        ImageView img_direction;
     }
 
     /* todo set small miles to ft */
+    /* todo add in image */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -38,6 +41,7 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             convertView = inflater.inflate(R.layout.item_direction, parent, false);
             viewHolder.tv_direction = (TextView) convertView.findViewById(R.id.tv_direction);
             viewHolder.tv_length = (TextView) convertView.findViewById(R.id.tv_distance);
+            viewHolder.img_direction = (ImageView) convertView.findViewById(R.id.img_direction);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -50,6 +54,7 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             viewHolder.tv_direction.setTextSize(24);
 
         }
+        viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_left));
         // Return the completed view to render on screen
         return convertView;
     }
