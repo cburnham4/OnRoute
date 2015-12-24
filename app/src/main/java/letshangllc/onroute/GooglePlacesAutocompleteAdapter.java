@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Carl on 12/23/2015.
  * Based off the jd-alexandar's  PlaceAutoCompleteAdapter
+ * https://github.com/jd-alexander/Google-Directions-Android/blob/master/sample/src/main/java/com/directions/sample/PlaceAutoCompleteAdapter.java
  */
 public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<GooglePlacesAutocompleteAdapter.PlaceAutocomplete> implements Filterable {
 

@@ -29,7 +29,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activity_Maps"
+            android:name=".Activities.Activity_Maps"
             android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity_DirectionsList"></activity>
+        <activity android:name=".Activities.Activity_DirectionsList"></activity>
+        <activity android:name=".Activities.Activity_CreateRoute"></activity>
     </application>
 
 </manifest>

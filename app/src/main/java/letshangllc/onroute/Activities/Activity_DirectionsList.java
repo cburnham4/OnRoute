@@ -1,4 +1,4 @@
-package letshangllc.onroute;
+package letshangllc.onroute.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+
+import letshangllc.onroute.Direction;
+import letshangllc.onroute.DirectionsAdapter;
+import letshangllc.onroute.R;
 
 public class Activity_DirectionsList extends AppCompatActivity {
     private ArrayList<Direction> directions;
