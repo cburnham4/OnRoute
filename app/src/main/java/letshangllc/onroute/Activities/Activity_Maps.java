@@ -17,7 +17,6 @@ import com.directions.route.RoutingListener;
 import com.directions.route.Segment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -108,7 +107,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar_maps, menu);
         return true;
     }
 
@@ -127,19 +126,9 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
             case R.id.action_route:
                 /* Start the place picker */
-
                 Intent intent2 = new Intent(Activity_Maps.this, Activity_CreateRoute.class);
                 startActivity(intent2);
                 break;
-
-                /* Todo make a place picker dropdown activity
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                try{
-                    startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
-                }catch (Exception e){
-
-                }
-                break;*/
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,13 +1,15 @@
 package letshangllc.onroute.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.SupportMapFragment;
-
-import java.util.ArrayList;
 
 import letshangllc.onroute.GooglePlacesAutocompleteAdapter;
 import letshangllc.onroute.R;
@@ -20,14 +22,25 @@ public class Activity_CreateRoute extends AppCompatActivity{
 
     private GoogleApiClient googleApiClient;
 
+    private Toolbar toolbar;
 
+    /*Todo Dynamically create the new views */
+    private AutoCompleteTextView startingAutoComplete;
+    private AutoCompleteTextView waypoint1AutoComplete;
+    private AutoCompleteTextView waypoint2AutoComplete;
+    private AutoCompleteTextView waypoint3AutoComplete;
+    private AutoCompleteTextView waypoint4AutoComplete;
+    private AutoCompleteTextView waypoint5AutoComplete;
+    private AutoCompleteTextView destinationAutoComplete;
+
+    private int numWaypoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_route);
 
-        /* todo Add connection callbacks later */
+        /* todo Add connection callbacks */
         googleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -36,8 +49,59 @@ public class Activity_CreateRoute extends AppCompatActivity{
         googleApiClient.connect();
 
         googlePlacesAutocompleteAdapter = new GooglePlacesAutocompleteAdapter(this,
-                R.layout.item_placepicker, googleApiClient, null);
+                android.R.layout.simple_list_item_1, googleApiClient, null);
+
+        this.findLayouts();
+        this.setAdapters();
 
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_toolbar_routes, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_add:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setUpToolbar(){
+        toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        setSupportActionBar(toolbar);
+        this.setTitle("On Route"); /* Set the title for toolbar */
+    }
+
+    private void findLayouts(){
+        startingAutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_start);
+        waypoint1AutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_waypoint1);
+        waypoint2AutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_waypoint2);
+        waypoint3AutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_waypoint3);
+        waypoint4AutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_waypoint4);
+        waypoint5AutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_waypoint5);
+        destinationAutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_destination);
+    }
+
+    private void setAdapters(){
+        startingAutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        waypoint1AutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        waypoint2AutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        waypoint3AutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        waypoint4AutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        waypoint5AutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+        destinationAutoComplete.setAdapter(googlePlacesAutocompleteAdapter);
+    }
+
 }
