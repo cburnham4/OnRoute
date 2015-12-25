@@ -12,7 +12,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/auto_picker_margin"
+        android:padding="@dimen/auto_picker_padding"
         android:layout_below="@+id/toolbar"
         android:id="@+id/scroll_destinations">
 
@@ -46,7 +46,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginBottom="@dimen/auto_picker_margin"
-                android:visibility="gone">
+                android:visibility="gone"
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/auto_waypoint1"

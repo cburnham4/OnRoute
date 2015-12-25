@@ -140,7 +140,7 @@ public class GooglePlacesAutocompleteAdapter extends ArrayAdapter<GooglePlacesAu
     /**
      * Holder for Places Geo Data Autocomplete API results.
      */
-    class PlaceAutocomplete {
+    public class PlaceAutocomplete {
 
         public CharSequence placeId;
         public CharSequence description;
