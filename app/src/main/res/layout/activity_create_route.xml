@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/auto_picker_padding"
         android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/btn_createRoute"
         android:id="@+id/scroll_destinations">
 
         <LinearLayout
@@ -154,12 +155,18 @@
         </LinearLayout>
     </ScrollView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Route"
+        android:id="@+id/btn_createRoute"
+        android:layout_above="@+id/tv_google_copy"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Search Powered by Google"
         android:id="@+id/tv_google_copy"
-
         android:layout_alignParentBottom="true" />
 
 

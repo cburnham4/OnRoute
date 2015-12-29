@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,7 +36,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
     private Toolbar toolbar;
 
     /* todo try putting places in static class */
-    private Place[] places;
+    private String[] placeIds;
 
     /*Todo Dynamically create the new views */
     private CardView waypoint1CardView;
@@ -52,6 +53,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
     private AutoCompleteTextView waypoint5AutoComplete;
     private AutoCompleteTextView destinationAutoComplete;
 
+    private Button btn_createRoute;
     private int numWaypoints;
 
     @Override
@@ -71,12 +73,27 @@ public class Activity_CreateRoute extends AppCompatActivity{
                 android.R.layout.simple_list_item_1, googleApiClient, null);
 
         /*Create an array for the 7 options of places to drive to */
-        places = new Place[7];
+        placeIds = new String[7];
 
         this.setUpToolbar();
-        this.findLayouts();
+        this.findViews();
         this.setAdapters();
+        this.setListeners();
 
+        btn_createRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String startId = placeIds[0];
+                String destinationId = placeIds[6];
+
+                if(startId == null || destinationId == null || startId.isEmpty() || destinationId.isEmpty()){
+                    Toast.makeText(Activity_CreateRoute.this, "Please choose a start point and destination", Toast.LENGTH_SHORT).show();
+                }else{
+                    setActivityResult();
+                }
+
+            }
+        });
 
     }
 
@@ -92,7 +109,6 @@ public class Activity_CreateRoute extends AppCompatActivity{
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
 
         int id = item.getItemId();
         switch (id){
@@ -124,7 +140,17 @@ public class Activity_CreateRoute extends AppCompatActivity{
         this.setTitle("Create Route"); /* Set the title for toolbar */
     }
 
-    private void findLayouts(){
+    private void setActivityResult(){
+        Intent intent = new Intent();
+        intent.putExtra(getResources().getString(R.string.PlacesListIntent), placeIds);
+
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void findViews () {
+        btn_createRoute = (Button) findViewById(R.id.btn_createRoute);
+
         waypoint1CardView = (CardView) findViewById(R.id.cardview_waypoint1);
         waypoint2CardView = (CardView) findViewById(R.id.cardview_waypoint2);
         waypoint3CardView = (CardView) findViewById(R.id.cardview_waypoint3);
@@ -173,28 +199,12 @@ public class Activity_CreateRoute extends AppCompatActivity{
             final GooglePlacesAutocompleteAdapter.PlaceAutocomplete item = googlePlacesAutocompleteAdapter.getItem(position);
             final String placeId = String.valueOf(item.placeId);
             Log.i(TAG, "Autocomplete item selected: " + item.description);
+            Log.i(TAG, "Autocomplete item ID: " + placeId);
             Log.i("View ", view.toString());
+            placeIds[routeNum] = placeId;
 
-            /*
-             Issue a request to the Places Geo Data API to retrieve a Place object with additional
-              details about the place.
-              */
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                    .getPlaceById(googleApiClient, placeId);
-            placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
-                @Override
-                public void onResult(PlaceBuffer placesBuffer) {
-                    if (!placesBuffer.getStatus().isSuccess()) {
-                        // Request did not complete successfully
-                        Log.e(TAG, "Place query did not complete. Error: " + placesBuffer.getStatus().toString());
-                        placesBuffer.release();
-                        return;
-                    }
-                    // Get the Place object from the buffer.
-                    final Place place = placesBuffer.get(0);
-                    places[routeNum] = place;
-                }
-            });
+            Places.GeoDataApi.getPlaceById(googleApiClient, placeIds);
+
         };
 
     }

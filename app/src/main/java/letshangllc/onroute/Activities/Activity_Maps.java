@@ -16,7 +16,10 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.directions.route.Segment;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,8 +30,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.common.api.ResultCallback;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import letshangllc.onroute.Direction;
@@ -39,16 +44,21 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private int PLACE_PICKER_REQUEST = 1;
+    private int CREATE_ROUTE_REQUEST = 1;
     private ArrayList<Place> places;
     private UserLocation userLocation;
+
+    private GoogleApiClient googleApiClient;
 
     private ArrayList<Polyline> polylines;
     private ArrayList<Direction> directions;
 
+    private ArrayList<LatLng> waypoints;
+
     protected LatLng start;
     protected LatLng end;
 
+    private String TAG = "MAPS_ACTIVITY";
     private Toolbar toolbar;
 
     @Override
@@ -68,6 +78,14 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
         places = new ArrayList<>();
         directions = new ArrayList<>();
 
+                /* todo Add connection callbacks */
+        googleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+        googleApiClient.connect();
+
     }
 
     private void setUpToolbar(){
@@ -79,27 +97,50 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_PICKER_REQUEST) {
+        if (requestCode == CREATE_ROUTE_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place: %s", place.getName());
-                //Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
 
-                Location currentLocation = userLocation.getLocation();
-                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                start = currentLatLng;
-                LatLng waypoint= start;
+                String[] placeIdsResult = data.getStringArrayExtra(getResources().getString(R.string.PlacesListIntent));
+                /* todo redo placesIds */
+                ArrayList<String> placeIdsList = new ArrayList();
+                for(int i =0; i<7; i++){
+                    if (placeIdsResult[i]!= null && !placeIdsResult[i].isEmpty()){
+                        placeIdsList.add(placeIdsResult[i]);
+                    }
+                }
+                String[] placeIds = placeIdsList.toArray(new String[placeIdsList.size()]);
+                PendingResult<PlaceBuffer> placeResult1 = Places.GeoDataApi.getPlaceById(googleApiClient, placeIds);
 
-                end = place.getLatLng();
+                placeResult1.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(PlaceBuffer placesBuffer) {
+                        if (!placesBuffer.getStatus().isSuccess()) {
+                            // Request did not complete successfully
+                            Log.e(TAG, "Place query did not complete. Error: " + placesBuffer.getStatus().toString());
+                            placesBuffer.release();
+                            return;
+                        }
+                        waypoints = new ArrayList<LatLng>();
+                        // Get the Place object from the buffer.
+                        //final Place place = placesBuffer.get(0);
+                        Iterator iterator = placesBuffer.iterator();
+                        while (iterator.hasNext()) {
+                            Place place = (Place) iterator.next();
+                            waypoints.add(place.getLatLng());
 
-                Routing routing = new Routing.Builder()
-                        .travelMode(Routing.TravelMode.DRIVING)
-                                .withListener(this)
-                                .waypoints(start, start, end)
+                        }
+
+                        placesBuffer.release();
+                        Log.e(TAG, "GOT TO CREATING ROUTE");
+                        Routing routing = new Routing.Builder()
+                                .travelMode(Routing.TravelMode.DRIVING)
+                                .withListener(Activity_Maps.this)
+                                .waypoints(waypoints)
                                 .build();
-                routing.execute();
 
-
+                        routing.execute();
+                    }
+                });
             }
         }
     }
@@ -127,7 +168,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
             case R.id.action_route:
                 /* Start the place picker */
                 Intent intent2 = new Intent(Activity_Maps.this, Activity_CreateRoute.class);
-                startActivity(intent2);
+                startActivityForResult(intent2, CREATE_ROUTE_REQUEST);
                 break;
         }
 
@@ -165,6 +206,9 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
         //progressDialog.dismiss();
+        start = waypoints.get(0);
+        end = waypoints.get(waypoints.size()-1);
+
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
 
@@ -206,21 +250,19 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                 directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()-previousSegment.getDistance()));
                 previousSegment = segment;
             }
+            directions.add(new Direction(i, "You arrived at your marked location. \n", 0));
 
             //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
         }
 
-        // Start marker
-        MarkerOptions options = new MarkerOptions();
-        options.position(start);
-        //options.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-        mMap.addMarker(options);
+        for(int i = 0; i<waypoints.size(); i++){
 
-        // End marker
-        options = new MarkerOptions();
-        options.position(end);
-        //options.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
-        mMap.addMarker(options);
+            MarkerOptions options = new MarkerOptions();
+            options.position(waypoints.get(i));
+            /* todo add color to marker */
+
+            mMap.addMarker(options);
+        }
 
     }
 
