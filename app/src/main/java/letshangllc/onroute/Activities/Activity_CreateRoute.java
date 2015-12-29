@@ -15,10 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
 import letshangllc.onroute.GooglePlacesAutocompleteAdapter;
@@ -31,6 +27,9 @@ public class Activity_CreateRoute extends AppCompatActivity{
     private static final String TAG = "CREATE_ROUTE";
     private GooglePlacesAutocompleteAdapter googlePlacesAutocompleteAdapter;
 
+    /*todo add place picker as option */
+
+    /* Todo save current locations */
     private GoogleApiClient googleApiClient;
 
     private Toolbar toolbar;
@@ -54,7 +53,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
     private AutoCompleteTextView destinationAutoComplete;
 
     private Button btn_createRoute;
-    private int numWaypoints;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +79,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
         this.setAdapters();
         this.setListeners();
 
+        /* Create Route only if start and destination locations have been selected */
         btn_createRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +113,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
         int id = item.getItemId();
         switch (id){
             case R.id.action_add:
-                Toast.makeText(this, "HERE: " + waypoint1AutoComplete.getVisibility() , Toast.LENGTH_SHORT).show();
+                /* Add in waypoint if it is not already added */
                 if(waypoint1CardView.getVisibility() == View.GONE){
                     waypoint1CardView.setVisibility(View.VISIBLE);
                 }else if(waypoint2CardView.getVisibility() == View.GONE){
@@ -141,6 +141,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
     }
 
     private void setActivityResult(){
+        /* Create a intent to return as result */
         Intent intent = new Intent();
         intent.putExtra(getResources().getString(R.string.PlacesListIntent), placeIds);
 
@@ -157,6 +158,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
         waypoint4CardView = (CardView) findViewById(R.id.cardview_waypoint4);
         waypoint5CardView = (CardView) findViewById(R.id.cardview_waypoint5);
 
+        /* Find waypoints as childs of cardview so the cardview visibility can be set */
         startingAutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_start);
         waypoint1AutoComplete = (AutoCompleteTextView) waypoint1CardView.getChildAt(0);
         waypoint2AutoComplete = (AutoCompleteTextView) waypoint2CardView.getChildAt(0);
@@ -196,11 +198,12 @@ public class Activity_CreateRoute extends AppCompatActivity{
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            /* Get the place selected and add it to placeIds array */
             final GooglePlacesAutocompleteAdapter.PlaceAutocomplete item = googlePlacesAutocompleteAdapter.getItem(position);
             final String placeId = String.valueOf(item.placeId);
             Log.i(TAG, "Autocomplete item selected: " + item.description);
             Log.i(TAG, "Autocomplete item ID: " + placeId);
-            Log.i("View ", view.toString());
+
             placeIds[routeNum] = placeId;
 
             Places.GeoDataApi.getPlaceById(googleApiClient, placeIds);

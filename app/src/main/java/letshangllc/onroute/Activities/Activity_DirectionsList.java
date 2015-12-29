@@ -3,6 +3,7 @@ package letshangllc.onroute.Activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,6 +22,10 @@ public class Activity_DirectionsList extends AppCompatActivity {
         setContentView(R.layout.activity_directions_list);
 
         this.CreateDirectionList();
+
+        if(directions.isEmpty()){
+            findViewById(R.id.tv_noDirections).setVisibility(View.VISIBLE);
+        }
     }
 
 

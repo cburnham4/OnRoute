@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import android.os.Handler;
+
 import com.directions.route.Route;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
@@ -20,7 +22,6 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,7 +41,7 @@ import letshangllc.onroute.Direction;
 import letshangllc.onroute.R;
 import letshangllc.onroute.UserLocation;
 
-public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallback, RoutingListener{ //, GoogleApiClient.OnConnectionFailedListener
+public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallback, RoutingListener { //, GoogleApiClient.OnConnectionFailedListener
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
@@ -60,6 +61,8 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
     private String TAG = "MAPS_ACTIVITY";
     private Toolbar toolbar;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,12 +91,11 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
-    private void setUpToolbar(){
+    private void setUpToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
         this.setTitle("On Route"); /* Set the title for toolbar */
     }
-
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,8 +105,8 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                 String[] placeIdsResult = data.getStringArrayExtra(getResources().getString(R.string.PlacesListIntent));
                 /* todo redo placesIds */
                 ArrayList<String> placeIdsList = new ArrayList();
-                for(int i =0; i<7; i++){
-                    if (placeIdsResult[i]!= null && !placeIdsResult[i].isEmpty()){
+                for (int i = 0; i < 7; i++) {
+                    if (placeIdsResult[i] != null && !placeIdsResult[i].isEmpty()) {
                         placeIdsList.add(placeIdsResult[i]);
                     }
                 }
@@ -127,7 +129,6 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                         while (iterator.hasNext()) {
                             Place place = (Place) iterator.next();
                             waypoints.add(place.getLatLng());
-
                         }
 
                         placesBuffer.release();
@@ -158,7 +159,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.action_directions:
                 Intent intent = new Intent(Activity_Maps.this, Activity_DirectionsList.class);
                 intent.putParcelableArrayListExtra(getResources().getString(R.string.DirectionsIntent), directions);
@@ -176,17 +177,12 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     }
 
 
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         userLocation = new UserLocation(this);
         Location currentLocation = userLocation.getLocation();
-
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 14f));
-
         mMap.setMyLocationEnabled(true);
     }
 
@@ -210,30 +206,24 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
         end = waypoints.get(waypoints.size()-1);
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(14);
 
         mMap.moveCamera(center);
         mMap.moveCamera(zoom);
 
         polylines = new ArrayList<>();
-        for (int i = 0; i <routes.get(0).getSegments().size(); i++) {
 
-            Log.i("DIRECTION: ", routes.get(0).getSegments().get(i).getInstruction());
-        }
-        Log.e("routes: ", "ROutes: " + routes.size());
-        //add route(s) to the map.
         for (int i = 0; i <routes.size(); i++) {
 
-            //todo In case of more than 5 alternative routes
+            //todo create routes with different colors
             //int colorIndex = i % colors.length;
 
             Route route = routes.get(i);
 
             PolylineOptions polyOptions = new PolylineOptions();
             //polyOptions.color(getResources().getColor(colors[colorIndex]));
-            polyOptions.color(getResources().getColor(R.color.black));
-            polyOptions.width(10 + i * 3);
-
+            polyOptions.color(getResources().getColor(R.color.primary));
+            polyOptions.width(13);
 
 
             polyOptions.addAll(route.getPoints());
@@ -245,18 +235,16 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
             Segment segment;
             Segment previousSegment = segments.get(0);
             directions.add(new Direction(i, previousSegment.getInstruction(), previousSegment.getDistance()));
-            for (int r = 1; r < segments.size(); r++){
+            for (int r = 1; r < segments.size(); r++) {
                 segment = segments.get(r);
-                directions.add(new Direction(i, segment.getInstruction(), segment.getDistance()-previousSegment.getDistance()));
+                directions.add(new Direction(i, segment.getInstruction(), segment.getDistance() - previousSegment.getDistance()));
                 previousSegment = segment;
             }
             directions.add(new Direction(i, "You arrived at your marked location. \n", 0));
 
-            //Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
         }
 
         for(int i = 0; i<waypoints.size(); i++){
-
             MarkerOptions options = new MarkerOptions();
             options.position(waypoints.get(i));
             /* todo add color to marker */
@@ -270,4 +258,16 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     public void onRoutingCancelled() {
 
     }
+
+    public Runnable updateTimer = new Runnable() {
+        public void run() {
+            /* todo have UserLocation update map */
+
+            /* Move camera to current location */
+            Location currentLocation = userLocation.getLocation();
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+            mMap.moveCamera(center);
+            handler.postDelayed(this, 5000);
+        }};
+
 }
