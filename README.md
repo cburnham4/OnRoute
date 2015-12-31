@@ -1,8 +1,7 @@
 # OnRoute
 
 ### Description
-OnRoute is an android application similar to Google Maps, but allows the user to route through multiple waypoints along the way to the final destination.
-
+OnRoute is an android application similar to Google Maps, but allows the user to route through multiple waypoints along the way to the final destination. When traveling the user can add up to 5 waypoints to drive through along the way. OnRoute aims to solve the issue of constantly re-routing on long road trips when attempting to add stops. The app currently features 3 activities. On activity for the map, one to select waypoints and destinations, and one to view the directions. 
 
 
 
