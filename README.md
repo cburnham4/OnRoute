@@ -5,7 +5,7 @@ OnRoute is an android application similar to Google Maps, but allows the user to
 
 
 ### Screenshots
-
+[!Alt Text](https://github.com/cburnham4/OnRoute/blob/master/Photos/screenshot_create_route.png)
 
 ### Libraries
  - Google Play Services
