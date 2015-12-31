@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.PlaceDetectionApi;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -61,8 +62,6 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
     private String TAG = "MAPS_ACTIVITY";
     private Toolbar toolbar;
-
-    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,10 +179,11 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        userLocation = new UserLocation(this);
+        userLocation = new UserLocation(this, googleMap);
         Location currentLocation = userLocation.getLocation();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 14f));
         mMap.setMyLocationEnabled(true);
+
     }
 
 
@@ -259,15 +259,6 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
-    public Runnable updateTimer = new Runnable() {
-        public void run() {
-            /* todo have UserLocation update map */
 
-            /* Move camera to current location */
-            Location currentLocation = userLocation.getLocation();
-            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-            mMap.moveCamera(center);
-            handler.postDelayed(this, 5000);
-        }};
 
 }

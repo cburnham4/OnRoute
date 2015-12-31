@@ -1,7 +1,13 @@
 package letshangllc.onroute.Activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.service.carrier.CarrierMessagingService;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -15,15 +21,23 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
+
+import java.io.IOException;
 
 import letshangllc.onroute.GooglePlacesAutocompleteAdapter;
 import letshangllc.onroute.R;
+import letshangllc.onroute.UserLocation;
 
 /**
  * Created by Carl on 12/22/2015.
  */
-public class Activity_CreateRoute extends AppCompatActivity{
+public class Activity_CreateRoute extends AppCompatActivity {
     private static final String TAG = "CREATE_ROUTE";
     private GooglePlacesAutocompleteAdapter googlePlacesAutocompleteAdapter;
 
@@ -86,9 +100,9 @@ public class Activity_CreateRoute extends AppCompatActivity{
                 String startId = placeIds[0];
                 String destinationId = placeIds[6];
 
-                if(startId == null || destinationId == null || startId.isEmpty() || destinationId.isEmpty()){
+                if (startId == null || destinationId == null || startId.isEmpty() || destinationId.isEmpty()) {
                     Toast.makeText(Activity_CreateRoute.this, "Please choose a start point and destination", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     setActivityResult();
                 }
 
@@ -111,21 +125,21 @@ public class Activity_CreateRoute extends AppCompatActivity{
         // as you specify a parent activity in AndroidManifest.xml.
 
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.action_add:
                 /* Add in waypoint if it is not already added */
-                if(waypoint1CardView.getVisibility() == View.GONE){
+                if (waypoint1CardView.getVisibility() == View.GONE) {
                     waypoint1CardView.setVisibility(View.VISIBLE);
-                }else if(waypoint2CardView.getVisibility() == View.GONE){
+                } else if (waypoint2CardView.getVisibility() == View.GONE) {
                     waypoint2CardView.setVisibility(View.VISIBLE);
 
-                }else if(waypoint3CardView.getVisibility() == View.GONE){
+                } else if (waypoint3CardView.getVisibility() == View.GONE) {
                     waypoint3CardView.setVisibility(View.VISIBLE);
 
-                }else if(waypoint4CardView.getVisibility() == View.GONE){
+                } else if (waypoint4CardView.getVisibility() == View.GONE) {
                     waypoint4CardView.setVisibility(View.VISIBLE);
 
-                }else if(waypoint5CardView.getVisibility() == View.GONE){
+                } else if (waypoint5CardView.getVisibility() == View.GONE) {
                     waypoint5CardView.setVisibility(View.VISIBLE);
                 }
                 break;
@@ -134,13 +148,13 @@ public class Activity_CreateRoute extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    private void setUpToolbar(){
+    private void setUpToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
         this.setTitle("Create Route"); /* Set the title for toolbar */
     }
 
-    private void setActivityResult(){
+    private void setActivityResult() {
         /* Create a intent to return as result */
         Intent intent = new Intent();
         intent.putExtra(getResources().getString(R.string.PlacesListIntent), placeIds);
@@ -149,7 +163,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
         finish();
     }
 
-    private void findViews () {
+    private void findViews() {
         btn_createRoute = (Button) findViewById(R.id.btn_createRoute);
 
         waypoint1CardView = (CardView) findViewById(R.id.cardview_waypoint1);
@@ -166,6 +180,38 @@ public class Activity_CreateRoute extends AppCompatActivity{
         waypoint4AutoComplete = (AutoCompleteTextView) waypoint4CardView.getChildAt(0);
         waypoint5AutoComplete = (AutoCompleteTextView) waypoint5CardView.getChildAt(0);
         destinationAutoComplete = (AutoCompleteTextView) findViewById(R.id.auto_destination);
+
+        /* Set the starting position to the User's current location */
+        UserLocation userLocation = new UserLocation(this.getApplicationContext());
+        try {
+            Address address = userLocation.getUserPlace();
+            startingAutoComplete.setText(address.getAddressLine(0)+", "+address.getLocality()+", "+ address.getAdminArea());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /* If the permission is not granted then complete the method */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        /* todo get placeid from long lat */
+        PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi
+                .getCurrentPlace(googleApiClient, null);
+        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
+            @Override
+            public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
+                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
+                    Log.i(TAG, String.format("Place '%s' has likelihood: %g",
+                            placeLikelihood.getPlace().getName(),
+                            placeLikelihood.getLikelihood()));
+
+                }
+                placeIds[0] = likelyPlaces.get(0).getPlace().getId();
+                likelyPlaces.release();
+            }
+        });
+
     }
 
     private void setAdapters(){
@@ -188,6 +234,7 @@ public class Activity_CreateRoute extends AppCompatActivity{
         destinationAutoComplete.setOnItemClickListener(new onPlaceClickListener(6));
     }
 
+    /* todo collapse auto picker when place is selected */
     public class onPlaceClickListener implements AdapterView.OnItemClickListener{
         private int routeNum;
 

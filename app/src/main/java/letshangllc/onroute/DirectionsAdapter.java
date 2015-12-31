@@ -61,7 +61,7 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_left));
         }else if(directionString.contains("Turn right")){
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_right));
-        }else{
+        }else if (directionString.contains("Head")){
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_go_straight));
         }
 

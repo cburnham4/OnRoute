@@ -30,15 +30,18 @@
 
         <activity
             android:name=".Activities.Activity_Maps"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.Activity_DirectionsList"></activity>
-        <activity android:name=".Activities.Activity_CreateRoute"></activity>
+        <activity android:name=".Activities.Activity_DirectionsList"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Activities.Activity_CreateRoute"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

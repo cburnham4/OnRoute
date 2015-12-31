@@ -3,13 +3,27 @@ package letshangllc.onroute;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Carl on 6/16/2015.
@@ -29,6 +43,9 @@ public class UserLocation extends Service implements LocationListener {
     double latitude;
     double longitude;
 
+    /* Reference the map created in the activity */
+    private GoogleMap mMap;
+
     // The minimum distance to change updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 5;
 
@@ -38,7 +55,13 @@ public class UserLocation extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public UserLocation(Context context) {
+    public UserLocation(Context context, GoogleMap map) {
+        this.mMap = map;
+        this.mContext = context;
+        getLocation();
+    }
+
+    public UserLocation(Context context){
         this.mContext = context;
         getLocation();
     }
@@ -128,6 +151,19 @@ public class UserLocation extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
         //Toast.makeText(getApplicationContext(), : " + location.toString(), Toast.LENGTH_LONG).show();
         updateGPSCoordinates(location);
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+        if(mMap != null){
+            mMap.moveCamera(center);
+        }
+
+
+    }
+
+    public Address getUserPlace() throws IOException {
+        Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
+        List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        return addresses.get(0);
+
     }
 
     @Override
