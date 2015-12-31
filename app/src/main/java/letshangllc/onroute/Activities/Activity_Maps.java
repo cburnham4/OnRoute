@@ -240,7 +240,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                 directions.add(new Direction(i, segment.getInstruction(), segment.getDistance() - previousSegment.getDistance()));
                 previousSegment = segment;
             }
-            directions.add(new Direction(i, "You arrived at your marked location. \n", 0));
+            directions.add(new Direction(i, "You arrived at your marked location. ", 0));
 
         }
 

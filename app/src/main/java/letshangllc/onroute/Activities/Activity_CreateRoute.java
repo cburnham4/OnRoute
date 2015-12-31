@@ -201,12 +201,7 @@ public class Activity_CreateRoute extends AppCompatActivity {
         result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
             @Override
             public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                    Log.i(TAG, String.format("Place '%s' has likelihood: %g",
-                            placeLikelihood.getPlace().getName(),
-                            placeLikelihood.getLikelihood()));
-
-                }
+                /* set the first likely place to the starting point (ie. most likely place) */
                 placeIds[0] = likelyPlaces.get(0).getPlace().getId();
                 likelyPlaces.release();
             }
@@ -235,6 +230,7 @@ public class Activity_CreateRoute extends AppCompatActivity {
     }
 
     /* todo collapse auto picker when place is selected */
+
     public class onPlaceClickListener implements AdapterView.OnItemClickListener{
         private int routeNum;
 

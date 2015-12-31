@@ -61,7 +61,15 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_left));
         }else if(directionString.contains("Turn right")){
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_turn_right));
-        }else if (directionString.contains("Head")){
+        }else if (directionString.contains("You arrived")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_current_location));
+        }else if (directionString.contains("Take exit") || directionString.contains("Keep right")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_ne_arrow));
+        }else if (directionString.contains("Keep left")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_nw_arrow));
+        }else if (directionString.contains("Merge")){
+            viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_call_merge_black_48dp));
+        }else{
             viewHolder.img_direction.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_go_straight));
         }
 
