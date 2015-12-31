@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * Created by Carl on 12/22/2015.
  */
 public class DirectionsAdapter extends ArrayAdapter<Direction> {
-    private ArrayList<Direction> directions;
 
     public DirectionsAdapter(Context context, ArrayList<Direction> directions){
         super(context, R.layout.item_direction, directions);
@@ -27,7 +26,6 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
     }
 
     /* todo set small miles to ft */
-    /* todo add in image */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
@@ -47,14 +45,15 @@ public class DirectionsAdapter extends ArrayAdapter<Direction> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         // Populate the data into the template view using the data object
-        viewHolder.tv_direction.setText(direction.getDirection());
+        String directionString = direction.getDirection();
+        viewHolder.tv_direction.setText(directionString);
 
         viewHolder.tv_length.setText(String.format("%.2f",direction.getLength()) + " mi  ");
         if(position==0){
             viewHolder.tv_direction.setTextSize(24);
 
         }
-        String directionString = direction.getDirection();
+
 
         /* todo move to string folder */
         if(directionString.contains("Turn left")){
