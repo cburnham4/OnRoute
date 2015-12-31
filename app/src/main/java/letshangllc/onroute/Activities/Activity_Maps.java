@@ -249,7 +249,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
         for(int i = 0; i<waypoints.size(); i++){
             MarkerOptions options = new MarkerOptions();
             options.position(waypoints.get(i));
-            /* todo add color to marker */
+            /* todo add color to markers */
 
             mMap.addMarker(options);
         }
