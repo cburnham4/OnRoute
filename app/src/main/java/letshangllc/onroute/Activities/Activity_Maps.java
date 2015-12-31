@@ -213,6 +213,8 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
 
         polylines = new ArrayList<>();
 
+        Log.e(TAG, "Number of routes: " +routes.size());
+
         for (int i = 0; i <routes.size(); i++) {
 
             //todo create routes with different colors
@@ -240,7 +242,7 @@ public class Activity_Maps extends AppCompatActivity implements OnMapReadyCallba
                 directions.add(new Direction(i, segment.getInstruction(), segment.getDistance() - previousSegment.getDistance()));
                 previousSegment = segment;
             }
-            directions.add(new Direction(i, "You arrived at your marked location. ", 0));
+            directions.add(new Direction(i, "You arrived at a marked location. ", 0));
 
         }
 
