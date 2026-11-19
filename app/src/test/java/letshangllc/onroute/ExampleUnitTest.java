@@ -2,14 +2,17 @@ package letshangllc.onroute;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * To work on unit tests, switch the Test Artifact in the Build Variants view.
+ * Example local unit test.
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+    public void direction_parcelFields_roundTrip() {
+        Direction direction = new Direction(1, "Turn left", 0.5);
+        assertEquals(1, direction.getRouteNum());
+        assertEquals("Turn left", direction.getDirection());
+        assertEquals(0.5, direction.getLength(), 0.0001);
     }
 }

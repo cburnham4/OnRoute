@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="letshangllc.onroute">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         ACCESS_FINE_LOCATION is required for My Location and Places Find Current Place.
+         INTERNET is required for Maps, Places, and Directions API calls (HTTPS).
     -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -14,15 +15,12 @@
         android:icon="@drawable/icon_pin114"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
+        android:theme="@style/MyMaterialTheme"
+        android:usesCleartextTraffic="false">
 
         <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             Maps / Places / Directions API key is injected at build time from
+             local.properties (MAPS_API_KEY). See local.properties.example.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -30,18 +28,22 @@
 
         <activity
             android:name=".Activities.Activity_Maps"
+            android:exported="true"
             android:label="@string/title_activity_maps"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.Activity_DirectionsList"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".Activities.Activity_CreateRoute"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Activities.Activity_DirectionsList"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activity_CreateRoute"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

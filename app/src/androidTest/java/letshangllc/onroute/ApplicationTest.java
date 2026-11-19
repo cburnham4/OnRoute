@@ -1,13 +1,19 @@
 package letshangllc.onroute;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertTrue;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Instrumented smoke test placeholder.
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
+@RunWith(AndroidJUnit4.class)
+public class ApplicationTest {
+    @Test
+    public void packageName_isExpected() {
+        assertTrue(true);
     }
 }

@@ -3,20 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Activities.Activity_DirectionsList">
 
     <ListView
+        android:id="@+id/lv_directions"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/lv_directions">
-
-    </ListView>
+        android:layout_height="match_parent" />
 
     <TextView
+        android:id="@+id/tv_noDirections"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No route has been created."
-        android:visibility="gone"
-        android:id="@+id/tv_noDirections"/>
+        android:padding="16dp"
+        android:text="@string/no_route_created"
+        android:visibility="gone" />
 
 </RelativeLayout>

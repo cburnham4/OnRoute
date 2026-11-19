@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OnRoute</string>
+    <string name="title_activity_maps">On Route</string>
+
+    <!-- Intent extra keys -->
+    <string name="PlacesListIntent">places_list_intent</string>
+    <string name="DirectionsIntent">directions_intent</string>
+
+    <!-- UI copy -->
+    <string name="hint_start">Choose a starting point…</string>
+    <string name="hint_waypoint">Choose a waypoint…</string>
+    <string name="hint_destination">Choose a destination…</string>
+    <string name="create_route">Create Route</string>
+    <string name="search_powered_by_google">Search Powered by Google</string>
+    <string name="no_route_created">No route has been created.</string>
+    <string name="menu_directions">Directions</string>
+    <string name="menu_make_route">Make Route</string>
+    <string name="menu_add_waypoint">Add waypoint</string>
+    <string name="toast_need_start_destination">Please choose a start point and destination</string>
+    <string name="toast_routing_failed">Something went wrong, try again</string>
+    <string name="toast_location_permission">Location permission is required to show your position on the map</string>
+    <string name="arrived_at_marked_location">You arrived at a marked location.</string>
+</resources>
