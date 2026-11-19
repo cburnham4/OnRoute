@@ -6,4 +6,16 @@
 .DS_Store
 /build
 /captures
-/app/src/main/res/values
+.kotlin/
+
+# Signing — never commit keystores or passwords
+keystore.properties
+*.jks
+*.keystore
+
+# Local API keys / secrets
+secrets.properties
+
+# IDE
+/.idea/caches
+/.idea/shelf

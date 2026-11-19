@@ -1,0 +1,9 @@
+## Copy to local.properties (gitignored) and fill in values.
+## sdk.dir is usually written automatically by Android Studio.
+
+# sdk.dir=/path/to/Android/sdk
+
+# Google Maps / Places / Directions API key (same key can serve all three if enabled):
+# Enable in Google Cloud Console: Maps SDK for Android, Places API, Directions API.
+# Restrict the key to your app's package name + signing certificate SHA-1.
+MAPS_API_KEY=YOUR_MAPS_API_KEY_HERE
